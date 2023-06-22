@@ -33,7 +33,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     return matches && matches[1];
   }
 
-  const domain = getDomainFromUrl(url);
+   const domain = getDomainFromUrl(url);
+
 
   const apiUrl = "https://api.api-ninjas.com/v1/dnslookup?domain=" + domain;
   console.log(apiUrl);
@@ -61,9 +62,28 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const storedDomainIPMap = data.domainIPMap || {};
         const domainName = document.getElementsByClassName("domainName")[0];
 
-        domainName.innerHTML = domain;
 
-        console.log(domain);
+       
+          
+        function hasCyrillicCharacter(str) {
+          for (let i = 0; i < str.length; i++) {
+            const codePoint = str.codePointAt(i);
+            if (codePoint >= 0x0400 && codePoint <= 0x04FF) {
+              return true;
+            }
+          }
+          return false;
+        }
+        
+       const cyValue =  hasCyrillicCharacter(domain);
+
+      if(cyValue){
+        domainName.innerHTML = '<div class="redAlert">Contains Cyrillic character(s)</div>'
+      }
+      else{
+        domainName.innerHTML = domain;
+      }
+
 
         confidence = updateDomainIPMap(
           storedDomainIPMap,
